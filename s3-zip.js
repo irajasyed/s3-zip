@@ -1,14 +1,16 @@
 const s3Files = require('s3-files')
 const archiver = require('archiver')
+const streamify = require('stream-array')
 
 const s3Zip = {}
 module.exports = s3Zip
 
-s3Zip.archive = function (opts, folder, filesS3, filesZip) {
+s3Zip.archive = function (opts, fileInfo, filesZip) {
   const self = this
+
   let connectionConfig
 
-  this.folder = folder
+  this.fileInfo = fileInfo
 
   self.debug = opts.debug || false
 
@@ -27,8 +29,8 @@ s3Zip.archive = function (opts, folder, filesS3, filesZip) {
   connectionConfig.bucket = opts.bucket
 
   self.client = s3Files.connect(connectionConfig)
-
-  const keyStream = self.client.createKeyStream(folder, filesS3)
+  const filesS3 = self.getFiles(fileInfo)
+  const keyStream = self.createKeyStream(fileInfo)
 
   const preserveFolderStructure = opts.preserveFolderStructure === true || filesZip
   const fileStream = s3Files.createFileStream(keyStream, preserveFolderStructure)
@@ -37,9 +39,30 @@ s3Zip.archive = function (opts, folder, filesS3, filesZip) {
   return archive
 }
 
+s3Zip.getFiles = function (fileInfo) {
+  return fileInfo.map(fileMeta => {
+    return fileMeta.key
+  })
+}
+
+s3Zip.createKeyStream = function (fileInfo) {
+  if (!fileInfo.length) return null
+  var paths = []
+  fileInfo.forEach(function (fileMeta) {
+    paths.push(fileMeta.folder + fileMeta.key)
+  })
+  return streamify(paths)
+}
+
+s3Zip.getFolderName = function (filePath) {
+  let fileMeta = this.fileInfo.find(fileMeta => {
+    return fileMeta.key === file.path
+  })
+  return fileMeta.folder
+}
+
 s3Zip.archiveStream = function (stream, filesS3, filesZip) {
   const self = this
-  const folder = this.folder || ''
   const archive = archiver(this.format || 'zip', this.archiverOpts || {})
   archive.on('error', function (err) {
     self.debug && console.log('archive error', err)
@@ -52,6 +75,7 @@ s3Zip.archiveStream = function (stream, filesS3, filesZip) {
       }
       let fname
       if (filesZip) {
+        const folder = self.getFolderName(file.path)
         // Place files_s3[i] into the archive as files_zip[i]
         const i = filesS3.indexOf(file.path.startsWith(folder) ? file.path.substr(folder.length) : file.path)
         fname = (i >= 0 && i < filesZip.length) ? filesZip[i] : file.path

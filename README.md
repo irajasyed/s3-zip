@@ -9,11 +9,13 @@ Download selected files from an Amazon S3 bucket as a zip file.
 
 ## Changes
 
+
+
 S3 File Names can be replaced with given alias if we provide File Alias in `aliasConfig`.
 
-```
+```javascript
 s3Zip
-  .archive({ region: region, bucket: bucket, aliasConfig: aliasConfig }, folder, [file1, file2, file3, file4])
+  .archive({ region: region, bucket: bucket, aliasConfig: aliasConfig }, [{ folder: 'folderName', file: 'file'}])
   .pipe(output)
 ```
 
@@ -51,7 +53,7 @@ const file4 = 'Image D.png'
 const output = fs.createWriteStream(join(__dirname, 'use-s3-zip.zip'))
 
 s3Zip
-  .archive({ region: region, bucket: bucket}, folder, [file1, file2, file3, file4])
+  .archive({ region: region, bucket: bucket}, [{ folder: 'folderName', file: file1}])
   .pipe(output)
 
 ```
@@ -68,7 +70,7 @@ const s3Client = new aws.S3({
 })
 
 s3Zip
-  .archive({ s3: s3Client, bucket: bucket }, folder, [file1, file2])
+  .archive({ s3: s3Client, bucket: bucket }, [{ folder: 'folderName', file: 'file'}])
   .pipe(output)
 ```
 
@@ -112,7 +114,7 @@ function zip(files) {
   console.log(files)
   const output = fs.createWriteStream(join(__dirname, 'use-s3-zip.zip'))
   s3Zip
-   .archive({ region: region, bucket: bucket, preserveFolderStructure: true }, folder, files)
+   .archive({ region: region, bucket: bucket, preserveFolderStructure: true }, [{ folder: 'folderName', file: files[0]}])
    .pipe(output)
 }
 ```
@@ -134,7 +136,7 @@ We use [archiver][archiver-url] to create archives. To pass your options to it, 
 s3Zip
   .setFormat('tar')
   .setArchiverOptions({ gzip: true })
-  .archive({ region: region, bucket: bucket }, folder, [file1, file2])
+  .archive({ region: region, bucket: bucket }, [{ folder: 'folderName', file: file1}])
 ```
 
 ### Organize your archive with custom paths and permissions
@@ -149,7 +151,7 @@ const archiveFiles = [
   /* _rw_______ */
   { name: 'road.jpg', mode: parseInt('0600', 8)  }
 ];
-s3Zip.archive({ region: region, bucket: bucket }, folder, files, archiveFiles)
+s3Zip.archive({ region: region, bucket: bucket }, [{ folder: 'folderName', file: files[0]}], archiveFiles)
 ```
 
 ### Debug mode
@@ -157,7 +159,7 @@ s3Zip.archive({ region: region, bucket: bucket }, folder, files, archiveFiles)
 Enable debug mode to see the logs:
 
 ```javascript
-s3Zip.archive({ region: region, bucket: bucket, debug: true }, folder, files)
+s3Zip.archive({ region: region, bucket: bucket, debug: true }, [{ folder: 'folderName', file: files[0]}])
 ```
 
 ## Testing

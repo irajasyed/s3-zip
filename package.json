@@ -1,6 +1,6 @@
 {
-  "name": "s3-zip",
-  "version": "2.0.1",
+  "name": "s3-zip-plus",
+  "version": "2.0.2",
   "description": "Download selected files from an Amazon S3 bucket as a zip file.",
   "main": "s3-zip.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/orangewise/s3-zip.git"
+    "url": "https://github.com/irajasyed/s3-zip.git"
   },
   "keywords": [
     "amazon",
@@ -21,9 +21,9 @@
   "author": "Ronald Luitwieler",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/orangewise/s3-zip/issues"
+    "url": "https://github.com/irajasyed/s3-zip/issues"
   },
-  "homepage": "https://github.com/orangewise/s3-zip#readme",
+  "homepage": "https://github.com/irajasyed/s3-zip#readme",
   "dependencies": {
     "archiver": "^3.0.0",
     "readable-stream": "^3.0.6",
