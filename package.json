@@ -1,6 +1,6 @@
 {
   "name": "s3-zip-plus",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Download selected files from an Amazon S3 bucket as a zip file.",
   "main": "s3-zip.js",
   "scripts": {
