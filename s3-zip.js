@@ -12,6 +12,8 @@ s3Zip.archive = function (opts, folder, filesS3, filesZip) {
 
   self.debug = opts.debug || false
 
+  self.aliasConfig = opts.aliasConfig || null
+
   if ('s3' in opts) {
     connectionConfig = {
       s3: opts.s3
@@ -54,8 +56,14 @@ s3Zip.archiveStream = function (stream, filesS3, filesZip) {
         const i = filesS3.indexOf(file.path.startsWith(folder) ? file.path.substr(folder.length) : file.path)
         fname = (i >= 0 && i < filesZip.length) ? filesZip[i] : file.path
       } else {
-        // Just use the S3 file name
-        fname = file.path
+        if (self.aliasConfig) {
+          let fileConf = self.aliasConfig.find(fileConf => {
+            return fileConf.name === file.path
+          })
+          fname = (fileConf ? fileConf.alias : file.path)
+        } else {
+          fname = file.path
+        }
       }
       const entryData = typeof fname === 'object' ? fname : { name: fname }
       self.debug && console.log('append to zip', fname)
