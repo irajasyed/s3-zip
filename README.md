@@ -7,7 +7,15 @@
 
 Download selected files from an Amazon S3 bucket as a zip file.
 
+## Changes
 
+S3 File Names can be replaced with given alias if we provide File Alias in `aliasConfig`.
+
+```
+s3Zip
+  .archive({ region: region, bucket: bucket, aliasConfig: aliasConfig }, folder, [file1, file2, file3, file4])
+  .pipe(output)
+```
 
 ## Install
 
